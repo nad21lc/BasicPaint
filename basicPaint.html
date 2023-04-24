@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint</title>
+
+    <style>
+        .tituloH1{
+            color:whitesmoke;
+            font-size: 55px;
+            font-family: Verdana, Tahoma, sans-serif;
+        }
+        body{
+            background-color:blueviolet;
+        }
+    </style>
+</head>
+<body>
+    <strong><h1 class="tituloH1">Paint básico</h1></strong>
+    <canvas width="600" height="400"></canvas>
+    <script>
+    var pantalla = document.querySelector('canvas');
+    var pincel = pantalla.getContext('2d');
+    pincel.fillStyle = 'lightgrey';
+    pincel.fillRect(0, 0, 600, 400);
+    var puedoDibujar = false;
+
+    //Variables para dibujar en el canvas
+    var colores = ["red", "green", "blue", "purple", "orange", "white", "black", "yellow"];
+    var barraX = 0;
+    var barraY = 0;
+    var yCuadrados = 0;
+    var tamanioCuadrados = 50;
+    var colorActual = "blue";
+    var tamPincel = 50;
+        
+    function escribirTexto(x , y, texto) {
+            pincel.font="15px Georgia";
+            pincel.fillStyle="black";
+            pincel.fillText(texto, x, y);    
+    }
+
+    function borrador(){
+        escribirTexto(550, 10, "borrador");
+    }
+
+    function dibujarCirculo(x,y,tamPincel, colorActual ) {
+        if(puedoDibujar) {
+            pincel.fillStyle = colorActual;
+            pincel.beginPath();
+            pincel.arc(x, y, tamPincel, 0, 2 * 3.14);
+            pincel.fill();
+        }
+    }
+
+    function dibujarCuadrado(x, y, tamanio, color) {
+        pincel.fillStyle = color;
+        pincel.fillRect(x, y, tamanio, tamanio)
+        pincel.fill();
+    }
+
+    function dibujarBarraDeColores(){
+        for(var i=0; i<colores.length; i++){
+            dibujarCuadrado(barraX,barraY, tamanioCuadrados, colores[i]);
+            barraX += tamanioCuadrados;
+        }
+        escribirTexto(barraX+10, barraY+30, "CLEAR")
+    }
+
+    function dibujarBarraDeTamanios(){
+        tamanioPincel = tamanioCuadrados;
+        var tamaniosX = 500;
+        var tamaniosY = 0;
+
+        for(var i=0; i < 3; i++){
+            dibujarCuadrado(tamaniosX,tamaniosY, tamanioPincel, "black");
+            tamaniosX += (tamanioPincel + 5);
+            tamanioPincel -= 20;
+            tamaniosY += 20;
+        }
+    }
+
+    function habilitarDibujar() {
+        puedoDibujar = true;
+    }
+
+    function deshabilitarDibujar() {
+        puedoDibujar = false;
+    }
+
+    //Función para delimitar el área
+    function puedoDiseniarArea(xCoordenada,yCoordenada){
+        if ((xCoordenada >= 0 && xCoordenada < (12*tamanioCuadrados+tamPincel)) && 
+            (yCoordenada >=0 && yCoordenada < (tamanioCuadrados+tamPincel))) {
+            return false;
+        } 
+        else{
+            return true;
+        }
+    }    
+
+    function capturarMovimientoDelMouse(evento){
+        var x = evento.pageX - pantalla.offsetLeft;
+        var y = evento.pageY - pantalla.offsetTop;
+
+        if (puedoDiseniarArea(x,y)){
+                dibujarCirculo(x,y,tamPincel, colorActual);
+        }
+    }
+
+    //para ver la pos real de cada elemento en la consola y así las interacciones con el clic sean más precisas :)
+    function capturarPosClicEnConsola(evento){
+        var x = evento.pageX - pantalla.offsetLeft;
+        var y = evento.pageY - pantalla.offsetTop;
+
+        console.log(x,y);
+    }
+
+    function seleccionarColor(evento) {
+        var x = evento.pageX - pantalla.offsetLeft;
+        var y = evento.pageY - pantalla.offsetTop;
+
+        //Cada condición altera el color de la variable colorActual
+        //Comenzamos por la condición del eje Y que es común para todas
+        if (y > yCuadrados && y < (yCuadrados + tamanioCuadrados)) {
+            if(x > 0 && x < (0 + tamanioCuadrados)) {
+                colorActual = colores[0];
+                console.log(colorActual);
+            } 
+            else if (x > 50 && x < (50 + tamanioCuadrados)) {
+                colorActual = colores[1];
+            } 
+            else if(x > 100 && x < (100 + tamanioCuadrados)) {
+                colorActual = colores[2];
+            }
+            else if (x > 150 && x < (150 + tamanioCuadrados)) {
+                colorActual = colores[3];
+            } 
+            else if (x > 200 && x < (200 + tamanioCuadrados)) {
+                colorActual = colores[4];
+            } 
+            else if (x > 250 && x < (250 + tamanioCuadrados)) {
+                colorActual = colores[5];
+            }       
+            else if (x > 300 && x < (300 + tamanioCuadrados)) {
+                colorActual = colores[6];
+            }      
+            else if (x > 350 && x < (350 + tamanioCuadrados)) {
+                colorActual = colores[7];
+            }  
+            else if (x > 400 && x < (400 + tamanioCuadrados)) {
+                pincel.clearRect(0,50,600,400); 
+                pincel.fillStyle = 'lightgrey';
+                pincel.fillRect(0, 50, 600, 400);
+            }
+            //pincel grosor 1
+            else if (x >= 504 && x <= 548) {
+                tamPincel = 50;
+            }  
+            //pincel grosor 2
+            else if (x >= 557 && x <= 586) {
+                tamPincel = 10;
+            } 
+            //pincel grosor 3
+            else if (x >= 592 && x <= 600) {
+                tamPincel = 3;
+            }                  
+        }
+    }
+
+    pantalla.onmousemove = capturarMovimientoDelMouse;
+    pantalla.onmousedown = habilitarDibujar;
+    pantalla.onmouseup = deshabilitarDibujar;
+    //Esto sólo me ayudó a capturar Las posiciones del mouse
+    //pantalla.onmousedown = capturarPosClicEnConsola;
+    pantalla.onclick = seleccionarColor;
+    dibujarBarraDeColores();
+    dibujarBarraDeTamanios();
+    
+    </script>
+</body>
+</html>
